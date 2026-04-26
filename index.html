@@ -183,6 +183,7 @@
     .result-section {
       display: none;
       animation: fadeIn 0.4s ease;
+      margin-top: 20px;
     }
     
     .result-section.show {
@@ -270,13 +271,6 @@
       border: 1px solid rgba(78, 204, 163, 0.2);
     }
     
-    .auto-fields-title {
-      font-size: 0.85rem;
-      color: var(--success);
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-    
     .auto-fields ul {
       list-style: none;
       font-size: 0.85rem;
@@ -290,69 +284,6 @@
     .auto-fields li::before {
       content: '✓ ';
       color: var(--success);
-    }
-    
-    .toggle-section {
-      margin-bottom: 18px;
-    }
-    
-    .toggle-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .toggle-header:hover {
-      background: rgba(255,255,255,0.08);
-    }
-    
-    .toggle-header span {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-    }
-    
-    .toggle-switch {
-      position: relative;
-      width: 50px;
-      height: 26px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 13px;
-      transition: all 0.3s ease;
-    }
-    
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 20px;
-      height: 20px;
-      background: var(--text-secondary);
-      border-radius: 50%;
-      transition: all 0.3s ease;
-    }
-    
-    .toggle-switch.active {
-      background: var(--accent);
-    }
-    
-    .toggle-switch.active::after {
-      left: 27px;
-      background: white;
-    }
-    
-    .toggle-content {
-      display: none;
-      padding: 16px 0 0 0;
-    }
-    
-    .toggle-content.show {
-      display: block;
     }
     
     footer {
@@ -455,7 +386,8 @@
       
       <div class="form-group">
         <label>電話 <span class="required">*</span></label>
-        <input type="tel" id="phone" placeholder="09XX-XXXXXX">
+        <input type="tel" id="phone" placeholder="0912-345678" pattern="09\d{2}-\d{6}">
+        <div class="hint">格式：09XX-XXXXXX（例如：0912-345678）</div>
       </div>
     </div>
     
@@ -465,13 +397,6 @@
       <div class="form-group">
         <label>留言備註</label>
         <input type="text" id="note" placeholder="選填，如追加填單請在此備註">
-      </div>
-      
-      <div class="toggle-section">
-        <div class="toggle-header" onclick="toggleAutoTime(this)">
-          <span>自動填入當下時間（預計匯款時間）</span>
-          <div class="toggle-switch active" id="autoTimeToggle"></div>
-        </div>
       </div>
     </div>
     
@@ -515,13 +440,6 @@
   </div>
   
   <script>
-    let autoTime = true;
-    
-    function toggleAutoTime(el) {
-      autoTime = !autoTime;
-      document.getElementById('autoTimeToggle').classList.toggle('active', autoTime);
-    }
-    
     function generateBookmarklet() {
       const plurk = document.getElementById('plurk').value.trim();
       const nickname = document.getElementById('nickname').value.trim();
@@ -539,9 +457,16 @@
         return;
       }
       
-      const timeCode = autoTime ? `var now=new Date();document.querySelectorAll('input').forEach(function(el){var a=el.getAttribute('aria-label')||'';if(a.includes('Month')){el.value=String(now.getMonth()+1).padStart(2,'0');el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Day')){el.value=String(now.getDate()).padStart(2,'0');el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Year')){el.value=now.getFullYear();el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Hour')){el.value=now.getHours()%12||12;el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Minute')){el.value=String(now.getMinutes()).padStart(2,'0');el.dispatchEvent(new Event('input',{bubbles:true}))}});` : '';
+      // 驗證電話格式 09XX-XXXXXX
+      const phoneRegex = /^09\d{2}-\d{6}$/;
+      if (!phoneRegex.test(phone)) {
+        alert('電話格式錯誤！請使用 09XX-XXXXXX 格式\n例如：0912-345678');
+        document.getElementById('phone').focus();
+        return;
+      }
       
-      const code = `javascript:(function(){var d={plurk:'${escapeStr(plurk)}',nickname:'${escapeStr(nickname)}',bank:'${escapeStr(bank)}',last5:'${escapeStr(last5)}',amount:'${escapeStr(amount)}',shippingMethod:'${escapeStr(shippingMethod)}',shipping:'${escapeStr(shipping)}',phone:'${escapeStr(phone)}',note:'${escapeStr(note)}'};var t=document.querySelectorAll('input[type="text"]');t.forEach(function(el){var a=el.getAttribute('aria-label')||'';var p=el.placeholder||'';if(a.includes('Month')||a.includes('Day')||a.includes('Year')||a.includes('Hour')||a.includes('Minute'))return;if(p.includes('@')||a.includes('噗浪')||a.includes('帳號')&&!a.includes('末五碼')){el.value=d.plurk}else if(a.includes('暱稱')||p.includes('暱稱')){el.value=d.nickname}else if(a.includes('末五碼')||p.includes('末五碼')||a.includes('帳號')&&a.includes('五碼')){el.value=d.last5}else if(a.includes('匯款金額')||a.includes('金額')||p.includes('金額')){el.value=d.amount}else if(a.includes('收件')||p.includes('收件')||p.includes('門市')||a.includes('門市')){el.value=d.shipping}else if(a.includes('電話')||p.includes('09')||a.includes('聯絡')){el.value=d.phone}else if(a.includes('備註')||a.includes('留言')){el.value=d.note}el.dispatchEvent(new Event('input',{bubbles:true}))});document.querySelectorAll('[role="checkbox"]').forEach(function(el){if(el.getAttribute('aria-checked')==='false')el.click()});document.querySelectorAll('.ssX1Bd').forEach(function(el){if(el.innerText.includes(d.shippingMethod)){var r=el.querySelector('[role="radio"]');if(r&&r.getAttribute('aria-checked')!=='true')r.click()}});document.querySelectorAll('.ssX1Bd').forEach(function(el){if(el.innerText.includes(d.bank)){var r=el.querySelector('[role="radio"]');if(r&&r.getAttribute('aria-checked')!=='true')r.click()}});document.querySelectorAll('.ssX1Bd').forEach(function(el){var txt=el.innerText.trim();if(txt==='是'){var r=el.querySelector('[role="radio"]');if(r&&r.getAttribute('aria-checked')!=='true')r.click()}});${timeCode}alert('✅ 自動填入完成！請檢查資料後送出')})();`;
+      // 使用已驗證有效的腳本結構，加入匯款時間自動填入
+      const code = `javascript:(function(){function findQuestionItem(keyword){var items=document.querySelectorAll('div[role="listitem"]');for(var i=0;i<items.length;i++){var item=items[i];var title=item.querySelector('[role="heading"],.M7eMe');if(title&&title.innerText.indexOf(keyword)>-1)return item}return null}function setValue(el,value){if(!el)return;el.focus();el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.blur()}function fillText(questionKeyword,value){var item=findQuestionItem(questionKeyword);if(!item)return;var input=item.querySelector('input[type="text"],textarea');if(input)setValue(input,value)}function chooseRadioContains(questionKeyword,optionKeyword){var item=findQuestionItem(questionKeyword);if(!item)return;var radios=item.querySelectorAll('[role="radio"]');for(var i=0;i<radios.length;i++){var r=radios[i];var label=r.closest('label');var text=(r.getAttribute('aria-label')||'')+' '+(r.getAttribute('data-value')||'')+' '+(label?label.innerText:'');if(text.indexOf(optionKeyword)>-1){r.click();return}}}function checkAllCheckboxes(){document.querySelectorAll('[role="checkbox"]').forEach(function(el){if(el.getAttribute('aria-checked')==='false')el.click()})}function fillDateTime(){var now=new Date();var inputs=document.querySelectorAll('input');inputs.forEach(function(el){var a=el.getAttribute('aria-label')||'';if(a.indexOf('Month')>-1||a.indexOf('月')>-1){setValue(el,String(now.getMonth()+1).padStart(2,'0'))}if(a.indexOf('Day')>-1||a.indexOf('日')>-1){setValue(el,String(now.getDate()).padStart(2,'0'))}if(a.indexOf('Year')>-1||a.indexOf('年')>-1){setValue(el,now.getFullYear())}if(a.indexOf('Hour')>-1||a.indexOf('時')>-1){setValue(el,now.getHours()%12||12)}if(a.indexOf('Minute')>-1||a.indexOf('分')>-1){setValue(el,String(now.getMinutes()).padStart(2,'0'))}});var ampmSelects=document.querySelectorAll('[role="listbox"]');ampmSelects.forEach(function(el){if(el.innerText.indexOf('AM')>-1||el.innerText.indexOf('PM')>-1){el.click();setTimeout(function(){var opts=document.querySelectorAll('[role="option"]');var target=new Date().getHours()>=12?'PM':'AM';opts.forEach(function(opt){if(opt.innerText.indexOf(target)>-1)opt.click()})},100)}})}var textRules={'噗浪帳號':'${escapeStr(plurk)}','暱稱':'${escapeStr(nickname)}','帳號末':'${escapeStr(last5)}','匯款金額':'${escapeStr(amount)}','收件資料':'${escapeStr(shipping)}','電話':'${escapeStr(phone)}','留言':'${escapeStr(note)}','備註':'${escapeStr(note)}'};var radioRules=[['匯款帳戶','${escapeStr(bank)}'],['寄送方式','${escapeStr(shippingMethod)}'],['請再次確認','是']];for(var k in textRules){if(textRules[k])fillText(k,textRules[k])}for(var i=0;i<radioRules.length;i++){chooseRadioContains(radioRules[i][0],radioRules[i][1])}checkAllCheckboxes();fillDateTime();alert('✅ 自動填入完成！請檢查資料後送出')})();`;
       
       document.getElementById('resultCode').textContent = code;
       document.getElementById('resultSection').classList.add('show');

@@ -93,6 +93,19 @@
     .auto-fields li::before { content: '✓ '; color: var(--success); }
     footer { text-align: center; margin-top: 30px; padding: 20px; color: var(--text-secondary); font-size: 0.85rem; }
     footer a { color: var(--accent-light); text-decoration: none; }
+    .drag-section { text-align: center; padding: 20px 0; }
+    .drag-hint { margin-bottom: 15px; color: var(--text-secondary); font-size: 0.95rem; }
+    .drag-hint strong { color: var(--accent-light); }
+    .drag-btn {
+      display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      color: white; font-size: 1.1rem; font-weight: 600; text-decoration: none; border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); cursor: grab;
+    }
+    .drag-btn:active { cursor: grabbing; }
+    .divider { text-align: center; color: var(--text-secondary); font-size: 0.85rem; margin: 20px 0; position: relative; }
+    .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 30%; height: 1px; background: var(--border); }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
   </style>
 </head>
 <body>
@@ -184,25 +197,31 @@
     <div class="result-section" id="result">
       <div class="card">
         <div class="card-title">你的專屬 Bookmarklet</div>
+        
+        <div class="drag-section">
+          <p class="drag-hint">👇 把下面的按鈕<strong>拖曳到書籤列</strong>就完成了！</p>
+          <a id="dragBtn" class="drag-btn" href="#">📝 團購快填</a>
+        </div>
+        
+        <div class="divider">或者手動複製程式碼</div>
+        
         <div class="result-box" id="code"></div>
         <button class="copy-btn" onclick="copyCode()">📋 複製程式碼</button>
         <div class="instructions">
-          <h3>📖 使用說明</h3>
+          <h3>📖 手動新增書籤</h3>
           <ol>
-            <li>複製上方程式碼</li>
             <li>在 Chrome 按 <code>Ctrl+Shift+B</code> 顯示書籤列</li>
             <li>對書籤列按右鍵 →「新增頁面」</li>
             <li>名稱填：<code>團購快填</code></li>
-            <li>網址貼上剛才複製的程式碼</li>
-            <li>開單時打開表單，點一下書籤即可！</li>
+            <li>網址貼上上方程式碼</li>
           </ol>
         </div>
       </div>
     </div>
     
     <footer>
-      <p>最後更新：2025-01-27 16:00</p>
-      <p>Made with ❤️ by <a href="https://www.plurk.com/joanna8799" target="_blank">@joanna8799</a></p>
+      <p>最後更新：2025-01-27 16:30</p>
+      <p>Made with ❤️ by <a href="https://github.com/joanna8799" target="_blank">joanna8799</a></p>
     </footer>
   </div>
   
@@ -251,7 +270,7 @@ function generate() {
     'function fillT(k,v){var item=findQ(k);if(!item)return;var inp=item.querySelector(\'input[type="text"],textarea\');if(inp)setV(inp,v)}',
     'function pickR(k,opt){var item=findQ(k);if(!item)return;var radios=item.querySelectorAll(\'[role="radio"]\');for(var i=0;i<radios.length;i++){var r=radios[i];var lbl=r.closest("label");var txt=(r.getAttribute("aria-label")||"")+(r.getAttribute("data-value")||"")+(lbl?lbl.innerText:"");if(txt.indexOf(opt)>-1){r["click"]();return}}}',
     'function chkBox(){var boxes=document.querySelectorAll(\'[role="checkbox"]\');for(var i=0;i<boxes.length;i++){if(boxes[i].getAttribute("aria-checked")==="false")boxes[i]["click"]()}}',
-    'function fillDT(){var now=new Date();var m=String(now.getMonth()+1).padStart(2,"0");var d=String(now.getDate()).padStart(2,"0");var y=now.getFullYear();var hr=now.getHours();var h12=hr>12?hr-12:(hr===0?12:hr);var h=String(h12);var mi=String(now.getMinutes()).padStart(2,"0");var dateStr=y+"-"+m+"-"+d;var inputs=document.querySelectorAll("input");for(var i=0;i<inputs.length;i++){var el=inputs[i];var a=el.getAttribute("aria-label")||"";var t=el.type;if(t==="date"){setV(el,dateStr)}else if(a.indexOf("小時")>-1||a.indexOf("Hour")>-1){setV(el,h)}else if(a.indexOf("分鐘")>-1||a.indexOf("Minute")>-1){setV(el,mi)}else if(a.indexOf("Month")>-1){setV(el,m)}else if(a.indexOf("Day")>-1){setV(el,d)}else if(a.indexOf("Year")>-1){setV(el,String(y))}}}',
+    'function fillDT(){var now=new Date();var m=String(now.getMonth()+1).padStart(2,"0");var d=String(now.getDate()).padStart(2,"0");var y=now.getFullYear();var hr=now.getHours();var h12=hr>12?hr-12:(hr===0?12:hr);var h=String(h12);var mi=String(now.getMinutes()).padStart(2,"0");var ispm=hr>=12;var dateStr=y+"-"+m+"-"+d;var inputs=document.querySelectorAll("input");for(var i=0;i<inputs.length;i++){var el=inputs[i];var a=el.getAttribute("aria-label")||"";var t=el.type;if(t==="date"){setV(el,dateStr)}else if(a.indexOf("小時")>-1||a.indexOf("Hour")>-1){setV(el,h)}else if(a.indexOf("分鐘")>-1||a.indexOf("Minute")>-1){setV(el,mi)}else if(a.indexOf("Month")>-1){setV(el,m)}else if(a.indexOf("Day")>-1){setV(el,d)}else if(a.indexOf("Year")>-1){setV(el,String(y))}}var lists=document.querySelectorAll("[role=listbox]");for(var j=0;j<lists.length;j++){var lb=lists[j];if(lb.innerText.indexOf("AM")>-1||lb.innerText.indexOf("PM")>-1||lb.innerText.indexOf("上午")>-1||lb.innerText.indexOf("下午")>-1){lb["click"]();setTimeout(function(){var opts=document.querySelectorAll("[role=option]");for(var x=0;x<opts.length;x++){var txt=opts[x].innerText;if((ispm&&(txt.indexOf("PM")>-1||txt.indexOf("下午")>-1))||(!ispm&&(txt.indexOf("AM")>-1||txt.indexOf("上午")>-1))){opts[x]["click"]();break}}},150);break}}}',
     'for(var k in textRules){if(textRules[k])fillT(k,textRules[k])}',
     'for(var i=0;i<radioRules.length;i++){pickR(radioRules[i][0],radioRules[i][1])}',
     'chkBox();',
@@ -262,6 +281,7 @@ function generate() {
   var code = 'javascript:(function(){' + scriptBody + '})();';
   
   document.getElementById('code').textContent = code;
+  document.getElementById('dragBtn').href = code;
   document.getElementById('result').classList.add('show');
   document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
 }

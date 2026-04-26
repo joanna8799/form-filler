@@ -201,7 +201,7 @@
     </div>
     
     <footer>
-      <p>最後更新：2025-01-27</p>
+      <p>最後更新：2025-01-27 15:45</p>
       <p>Made with ❤️ by <a href="https://www.plurk.com/joanna8799" target="_blank">@joanna8799</a></p>
     </footer>
   </div>
@@ -251,7 +251,7 @@ function generate() {
     'function fillT(k,v){var item=findQ(k);if(!item)return;var inp=item.querySelector(\'input[type="text"],textarea\');if(inp)setV(inp,v)}',
     'function pickR(k,opt){var item=findQ(k);if(!item)return;var radios=item.querySelectorAll(\'[role="radio"]\');for(var i=0;i<radios.length;i++){var r=radios[i];var lbl=r.closest("label");var txt=(r.getAttribute("aria-label")||"")+(r.getAttribute("data-value")||"")+(lbl?lbl.innerText:"");if(txt.indexOf(opt)>-1){r["click"]();return}}}',
     'function chkBox(){var boxes=document.querySelectorAll(\'[role="checkbox"]\');for(var i=0;i<boxes.length;i++){if(boxes[i].getAttribute("aria-checked")==="false")boxes[i]["click"]()}}',
-    'function fillDT(){var now=new Date();var m=String(now.getMonth()+1).padStart(2,"0");var d=String(now.getDate()).padStart(2,"0");var y=String(now.getFullYear());var h=String(now.getHours()%12||12);var mi=String(now.getMinutes()).padStart(2,"0");var inputs=document.querySelectorAll("input");for(var i=0;i<inputs.length;i++){var a=inputs[i].getAttribute("aria-label")||"";if(a.indexOf("Month")>-1)setV(inputs[i],m);else if(a.indexOf("Day")>-1)setV(inputs[i],d);else if(a.indexOf("Year")>-1)setV(inputs[i],y);else if(a.indexOf("Hour")>-1)setV(inputs[i],h);else if(a.indexOf("Minute")>-1)setV(inputs[i],mi)}}',
+    'function fillDT(){var now=new Date();var m=String(now.getMonth()+1).padStart(2,"0");var d=String(now.getDate()).padStart(2,"0");var y=String(now.getFullYear());var hr=now.getHours();var h12=hr>12?hr-12:(hr===0?12:hr);var h=String(h12);var mi=String(now.getMinutes()).padStart(2,"0");var inputs=document.querySelectorAll("input");for(var i=0;i<inputs.length;i++){var a=inputs[i].getAttribute("aria-label")||"";if(a.indexOf("Month")>-1)setV(inputs[i],m);else if(a.indexOf("Day")>-1)setV(inputs[i],d);else if(a.indexOf("Year")>-1)setV(inputs[i],y);else if(a.indexOf("Hour")>-1)setV(inputs[i],h);else if(a.indexOf("Minute")>-1)setV(inputs[i],mi)}}',
     'for(var k in textRules){if(textRules[k])fillT(k,textRules[k])}',
     'for(var i=0;i<radioRules.length;i++){pickR(radioRules[i][0],radioRules[i][1])}',
     'chkBox();',

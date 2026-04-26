@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google 表單快填工具</title>
+  <meta name="description" content="快速生成 Google 表單自動填寫書籤，一鍵填入你的常用資料">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-card: #0f3460;
+      --accent: #e94560;
+      --accent-light: #ff6b6b;
+      --text-primary: #eaeaea;
+      --text-secondary: #a0a0a0;
+      --success: #4ecca3;
+      --border: rgba(255,255,255,0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      min-height: 100vh;
+      color: var(--text-primary);
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+    }
+    
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    .card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    
+    label .required {
+      color: var(--accent);
+    }
+    
+    input[type="text"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
+    }
+    
+    input::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+    
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    
+    select option {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    
+    .hint {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+    
+    .generate-btn {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+    }
+    
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+    }
+    
+    .generate-btn:active {
+      transform: translateY(0);
+    }
+    
+    .result-section {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .result-section.show {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .result-box {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      user-select: all;
+    }
+    
+    .copy-btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--success);
+      border: none;
+      border-radius: 10px;
+      color: var(--bg-primary);
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .copy-btn:hover {
+      background: #5fe3b3;
+    }
+    
+    .copy-btn.copied {
+      background: #3d9;
+    }
+    
+    .instructions {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(78, 204, 163, 0.1);
+      border-radius: 10px;
+      border: 1px solid rgba(78, 204, 163, 0.3);
+    }
+    
+    .instructions h3 {
+      font-size: 0.95rem;
+      color: var(--success);
+      margin-bottom: 12px;
+    }
+    
+    .instructions ol {
+      padding-left: 20px;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    
+    .instructions li {
+      margin-bottom: 4px;
+    }
+    
+    .instructions code {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .auto-fields {
+      background: rgba(78, 204, 163, 0.1);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(78, 204, 163, 0.2);
+    }
+    
+    .auto-fields-title {
+      font-size: 0.85rem;
+      color: var(--success);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .auto-fields ul {
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    
+    .auto-fields li {
+      padding: 2px 0;
+    }
+    
+    .auto-fields li::before {
+      content: '✓ ';
+      color: var(--success);
+    }
+    
+    .toggle-section {
+      margin-bottom: 18px;
+    }
+    
+    .toggle-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .toggle-header:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    
+    .toggle-header span {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 13px;
+      transition: all 0.3s ease;
+    }
+    
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    
+    .toggle-switch.active {
+      background: var(--accent);
+    }
+    
+    .toggle-switch.active::after {
+      left: 27px;
+      background: white;
+    }
+    
+    .toggle-content {
+      display: none;
+      padding: 16px 0 0 0;
+    }
+    
+    .toggle-content.show {
+      display: block;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    footer a {
+      color: var(--accent-light);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">📝</div>
+      <h1>Google 表單快填工具</h1>
+      <p class="subtitle">填寫你的資料，生成專屬的一鍵填表書籤</p>
+    </header>
+    
+    <div class="card">
+      <div class="card-title">基本資料</div>
+      
+      <div class="form-group">
+        <label>噗浪帳號 <span class="required">*</span></label>
+        <input type="text" id="plurk" placeholder="@yourname" value="@">
+        <div class="hint">請包含 @</div>
+      </div>
+      
+      <div class="form-group">
+        <label>暱稱 <span class="required">*</span></label>
+        <input type="text" id="nickname" placeholder="你的暱稱">
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">匯款資訊</div>
+      
+      <div class="form-group">
+        <label>匯款帳戶 <span class="required">*</span></label>
+        <select id="bank">
+          <option value="郵局">郵局</option>
+          <option value="中國信託">中國信託</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>帳號末五碼 <span class="required">*</span></label>
+        <input type="text" id="last5" placeholder="12345" maxlength="5">
+        <div class="hint">⚠️ 中信轉中信請不要填註記部分</div>
+      </div>
+      
+      <div class="form-group">
+        <label>匯款金額 <span class="required">*</span></label>
+        <input type="text" id="amount" placeholder="1080">
+        <div class="hint">多團合併請填：A團xxx+B團xxx=總金額</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">寄送資訊</div>
+      
+      <div class="form-group">
+        <label>寄送方式 <span class="required">*</span></label>
+        <select id="shippingMethod">
+          <option value="711賣貨便">711賣貨便</option>
+          <option value="711店到店">711店到店</option>
+          <option value="郵寄">郵寄</option>
+          <option value="面交">面交</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>收件資料 <span class="required">*</span></label>
+        <input type="text" id="shipping" placeholder="王小明/全家中山門市">
+        <div class="hint">賣貨便格式：本名/取貨門市</div>
+      </div>
+      
+      <div class="form-group">
+        <label>電話 <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="09XX-XXXXXX">
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">其他設定</div>
+      
+      <div class="form-group">
+        <label>留言備註</label>
+        <input type="text" id="note" placeholder="選填，如追加填單請在此備註">
+      </div>
+      
+      <div class="toggle-section">
+        <div class="toggle-header" onclick="toggleAutoTime(this)">
+          <span>自動填入當下時間（預計匯款時間）</span>
+          <div class="toggle-switch active" id="autoTimeToggle"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">自動執行項目</div>
+      <div class="auto-fields">
+        <ul>
+          <li>電子郵件記錄 - 自動勾選</li>
+          <li>確認已看過流程 - 自動選「是」</li>
+          <li>預計匯款時間 - 自動填入當下時間</li>
+        </ul>
+      </div>
+      <div class="hint">以上項目會在執行腳本時自動完成</div>
+    </div>
+    
+    <button class="generate-btn" onclick="generateBookmarklet()">✨ 生成我的專屬書籤</button>
+    
+    <div class="result-section" id="resultSection">
+      <div class="card">
+        <div class="card-title">你的專屬 Bookmarklet</div>
+        <div class="result-box" id="resultCode"></div>
+        <button class="copy-btn" onclick="copyCode()">📋 複製程式碼</button>
+        
+        <div class="instructions">
+          <h3>📖 使用說明</h3>
+          <ol>
+            <li>複製上方程式碼</li>
+            <li>在 Chrome 按 <code>Ctrl+Shift+B</code> 顯示書籤列</li>
+            <li>對書籤列按右鍵 →「新增頁面」</li>
+            <li>名稱填：<code>團購快填</code></li>
+            <li>網址貼上剛才複製的程式碼</li>
+            <li>開單時打開表單，點一下書籤即可！</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      Made with ❤️ by <a href="https://www.plurk.com/joanna8799" target="_blank">@joanna8799</a>
+    </footer>
+  </div>
+  
+  <script>
+    let autoTime = true;
+    
+    function toggleAutoTime(el) {
+      autoTime = !autoTime;
+      document.getElementById('autoTimeToggle').classList.toggle('active', autoTime);
+    }
+    
+    function generateBookmarklet() {
+      const plurk = document.getElementById('plurk').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      const bank = document.getElementById('bank').value;
+      const last5 = document.getElementById('last5').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+      const shippingMethod = document.getElementById('shippingMethod').value;
+      const shipping = document.getElementById('shipping').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const note = document.getElementById('note').value.trim();
+      
+      // 驗證必填
+      if (!plurk || plurk === '@' || !nickname || !last5 || !amount || !shipping || !phone) {
+        alert('請填寫所有必填欄位！');
+        return;
+      }
+      
+      const timeCode = autoTime ? `var now=new Date();document.querySelectorAll('input').forEach(function(el){var a=el.getAttribute('aria-label')||'';if(a.includes('Month')){el.value=String(now.getMonth()+1).padStart(2,'0');el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Day')){el.value=String(now.getDate()).padStart(2,'0');el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Year')){el.value=now.getFullYear();el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Hour')){el.value=now.getHours()%12||12;el.dispatchEvent(new Event('input',{bubbles:true}))}if(a.includes('Minute')){el.value=String(now.getMinutes()).padStart(2,'0');el.dispatchEvent(new Event('input',{bubbles:true}))}});` : '';
+      
+      const code = `javascript:(function(){var d={plurk:'${escapeStr(plurk)}',nickname:'${escapeStr(nickname)}',bank:'${escapeStr(bank)}',last5:'${escapeStr(last5)}',amount:'${escapeStr(amount)}',shippingMethod:'${escapeStr(shippingMethod)}',shipping:'${escapeStr(shipping)}',phone:'${escapeStr(phone)}',note:'${escapeStr(note)}'};var t=document.querySelectorAll('input[type="text"]');t.forEach(function(el){var a=el.getAttribute('aria-label')||'';var p=el.placeholder||'';if(a.includes('Month')||a.includes('Day')||a.includes('Year')||a.includes('Hour')||a.includes('Minute'))return;if(p.includes('@')||a.includes('噗浪')||a.includes('帳號')&&!a.includes('末五碼')){el.value=d.plurk}else if(a.includes('暱稱')||p.includes('暱稱')){el.value=d.nickname}else if(a.includes('末五碼')||p.includes('末五碼')||a.includes('帳號')&&a.includes('五碼')){el.value=d.last5}else if(a.includes('匯款金額')||a.includes('金額')||p.includes('金額')){el.value=d.amount}else if(a.includes('收件')||p.includes('收件')||p.includes('門市')||a.includes('門市')){el.value=d.shipping}else if(a.includes('電話')||p.includes('09')||a.includes('聯絡')){el.value=d.phone}else if(a.includes('備註')||a.includes('留言')){el.value=d.note}el.dispatchEvent(new Event('input',{bubbles:true}))});document.querySelectorAll('[role="checkbox"]').forEach(function(el){if(el.getAttribute('aria-checked')==='false')el.click()});document.querySelectorAll('.ssX1Bd').forEach(function(el){if(el.innerText.includes(d.shippingMethod)){var r=el.querySelector('[role="radio"]');if(r&&r.getAttribute('aria-checked')!=='true')r.click()}});document.querySelectorAll('.ssX1Bd').forEach(function(el){if(el.innerText.includes(d.bank)){var r=el.querySelector('[role="radio"]');if(r&&r.getAttribute('aria-checked')!=='true')r.click()}});document.querySelectorAll('.ssX1Bd').forEach(function(el){var txt=el.innerText.trim();if(txt==='是'){var r=el.querySelector('[role="radio"]');if(r&&r.getAttribute('aria-checked')!=='true')r.click()}});${timeCode}alert('✅ 自動填入完成！請檢查資料後送出')})();`;
+      
+      document.getElementById('resultCode').textContent = code;
+      document.getElementById('resultSection').classList.add('show');
+      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function escapeStr(str) {
+      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+    
+    function copyCode() {
+      const code = document.getElementById('resultCode').textContent;
+      navigator.clipboard.writeText(code).then(function() {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✅ 已複製！';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = '📋 複製程式碼';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google 表單快填工具</title>
-  <meta name="description" content="快速生成 Google 表單自動填寫書籤，一鍵填入你的常用資料">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
@@ -19,13 +18,7 @@
       --success: #4ecca3;
       --border: rgba(255,255,255,0.1);
     }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Noto Sans TC', sans-serif;
       background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
@@ -33,289 +26,73 @@
       color: var(--text-primary);
       padding: 20px;
     }
-    
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding: 20px;
-    }
-    
-    .logo {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
-    
+    .container { max-width: 600px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 30px; padding: 20px; }
+    .logo { font-size: 3rem; margin-bottom: 10px; }
     h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 10px;
+      font-size: 1.8rem; font-weight: 700; margin-bottom: 10px;
       background: linear-gradient(90deg, var(--accent-light), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    
-    .subtitle {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
-    
+    .subtitle { color: var(--text-secondary); font-size: 0.95rem; }
     .card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      background: var(--bg-card); border-radius: 16px; padding: 24px; margin-bottom: 20px;
+      border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
-    
     .card-title {
-      font-size: 1.1rem;
-      font-weight: 500;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 1.1rem; font-weight: 500; margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
     }
-    
-    .card-title::before {
-      content: '';
-      width: 4px;
-      height: 20px;
-      background: var(--accent);
-      border-radius: 2px;
+    .card-title::before { content: ''; width: 4px; height: 20px; background: var(--accent); border-radius: 2px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 6px; }
+    label .required { color: var(--accent); }
+    input[type="text"], input[type="tel"], select {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px;
+      background: rgba(255,255,255,0.05); color: var(--text-primary); font-size: 1rem; font-family: inherit;
     }
-    
-    .form-group {
-      margin-bottom: 18px;
-    }
-    
-    label {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-    }
-    
-    label .required {
-      color: var(--accent);
-    }
-    
-    input[type="text"],
-    input[type="tel"],
-    select {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.05);
-      color: var(--text-primary);
-      font-size: 1rem;
-      font-family: inherit;
-      transition: all 0.2s ease;
-    }
-    
-    input[type="text"]:focus,
-    input[type="tel"]:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--accent);
-      background: rgba(255,255,255,0.08);
+    input:focus, select:focus {
+      outline: none; border-color: var(--accent); background: rgba(255,255,255,0.08);
       box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
     }
-    
-    input::placeholder {
-      color: var(--text-secondary);
-      opacity: 0.6;
-    }
-    
+    input::placeholder { color: var(--text-secondary); opacity: 0.6; }
     select {
-      cursor: pointer;
-      appearance: none;
+      cursor: pointer; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
+      background-repeat: no-repeat; background-position: right 12px center;
     }
-    
-    select option {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-    }
-    
-    .hint {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-top: 4px;
-      opacity: 0.8;
-    }
-    
+    select option { background: var(--bg-secondary); color: var(--text-primary); }
+    .hint { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; opacity: 0.8; }
     .generate-btn {
-      width: 100%;
-      padding: 16px 24px;
+      width: 100%; padding: 16px 24px;
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+      border: none; border-radius: 12px; color: white; font-size: 1.1rem; font-weight: 600;
+      font-family: inherit; cursor: pointer; box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
     }
-    
-    .generate-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
-    }
-    
-    .generate-btn:active {
-      transform: translateY(0);
-    }
-    
-    .result-section {
-      display: none;
-      animation: fadeIn 0.4s ease;
-      margin-top: 20px;
-    }
-    
-    .result-section.show {
-      display: block;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
+    .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5); }
+    .result-section { display: none; margin-top: 20px; }
+    .result-section.show { display: block; }
     .result-box {
-      background: rgba(0,0,0,0.3);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 16px;
-      word-break: break-all;
-      font-family: 'Courier New', monospace;
-      font-size: 0.85rem;
-      max-height: 150px;
-      overflow-y: auto;
-      border: 1px solid var(--border);
-      user-select: all;
+      background: rgba(0,0,0,0.3); border-radius: 10px; padding: 16px; margin-bottom: 16px;
+      word-break: break-all; font-family: monospace; font-size: 0.8rem; max-height: 120px;
+      overflow-y: auto; border: 1px solid var(--border); user-select: all;
     }
-    
     .copy-btn {
-      width: 100%;
-      padding: 14px 20px;
-      background: var(--success);
-      border: none;
-      border-radius: 10px;
-      color: var(--bg-primary);
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      width: 100%; padding: 14px 20px; background: var(--success); border: none; border-radius: 10px;
+      color: var(--bg-primary); font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer;
     }
-    
-    .copy-btn:hover {
-      background: #5fe3b3;
-    }
-    
-    .copy-btn.copied {
-      background: #3d9;
-    }
-    
-    .instructions {
-      margin-top: 20px;
-      padding: 16px;
-      background: rgba(78, 204, 163, 0.1);
-      border-radius: 10px;
-      border: 1px solid rgba(78, 204, 163, 0.3);
-    }
-    
-    .instructions h3 {
-      font-size: 0.95rem;
-      color: var(--success);
-      margin-bottom: 12px;
-    }
-    
-    .instructions ol {
-      padding-left: 20px;
-      font-size: 0.9rem;
-      line-height: 1.8;
-      color: var(--text-secondary);
-    }
-    
-    .instructions li {
-      margin-bottom: 4px;
-    }
-    
-    .instructions code {
-      background: rgba(255,255,255,0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-    }
-
-    .auto-fields {
-      background: rgba(78, 204, 163, 0.1);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(78, 204, 163, 0.2);
-    }
-    
-    .auto-fields ul {
-      list-style: none;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-    
-    .auto-fields li {
-      padding: 2px 0;
-    }
-    
-    .auto-fields li::before {
-      content: '✓ ';
-      color: var(--success);
-    }
-    
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      padding: 20px;
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-    }
-    
-    footer a {
-      color: var(--accent-light);
-      text-decoration: none;
-    }
-    
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding: 12px;
-      }
-      
-      h1 {
-        font-size: 1.5rem;
-      }
-      
-      .card {
-        padding: 18px;
-      }
-    }
+    .copy-btn:hover { background: #5fe3b3; }
+    .copy-btn.copied { background: #3d9; }
+    .instructions { margin-top: 20px; padding: 16px; background: rgba(78, 204, 163, 0.1); border-radius: 10px; border: 1px solid rgba(78, 204, 163, 0.3); }
+    .instructions h3 { font-size: 0.95rem; color: var(--success); margin-bottom: 12px; }
+    .instructions ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.8; color: var(--text-secondary); }
+    .instructions code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+    .auto-fields { background: rgba(78, 204, 163, 0.1); border-radius: 10px; padding: 14px; margin-bottom: 20px; border: 1px solid rgba(78, 204, 163, 0.2); }
+    .auto-fields ul { list-style: none; font-size: 0.85rem; color: var(--text-secondary); }
+    .auto-fields li { padding: 2px 0; }
+    .auto-fields li::before { content: '✓ '; color: var(--success); }
+    footer { text-align: center; margin-top: 30px; padding: 20px; color: var(--text-secondary); font-size: 0.85rem; }
+    footer a { color: var(--accent-light); text-decoration: none; }
   </style>
 </head>
 <body>
@@ -328,13 +105,11 @@
     
     <div class="card">
       <div class="card-title">基本資料</div>
-      
       <div class="form-group">
         <label>噗浪帳號 <span class="required">*</span></label>
         <input type="text" id="plurk" placeholder="@yourname" value="@">
         <div class="hint">請包含 @</div>
       </div>
-      
       <div class="form-group">
         <label>暱稱 <span class="required">*</span></label>
         <input type="text" id="nickname" placeholder="你的暱稱">
@@ -343,7 +118,6 @@
     
     <div class="card">
       <div class="card-title">匯款資訊</div>
-      
       <div class="form-group">
         <label>匯款帳戶 <span class="required">*</span></label>
         <select id="bank">
@@ -351,13 +125,11 @@
           <option value="中國信託">中國信託</option>
         </select>
       </div>
-      
       <div class="form-group">
         <label>帳號末五碼 <span class="required">*</span></label>
         <input type="text" id="last5" placeholder="12345" maxlength="5">
         <div class="hint">⚠️ 中信轉中信請不要填註記部分</div>
       </div>
-      
       <div class="form-group">
         <label>匯款金額 <span class="required">*</span></label>
         <input type="text" id="amount" placeholder="1080">
@@ -367,7 +139,6 @@
     
     <div class="card">
       <div class="card-title">寄送資訊</div>
-      
       <div class="form-group">
         <label>寄送方式 <span class="required">*</span></label>
         <select id="shippingMethod">
@@ -377,23 +148,20 @@
           <option value="面交">面交</option>
         </select>
       </div>
-      
       <div class="form-group">
         <label>收件資料 <span class="required">*</span></label>
         <input type="text" id="shipping" placeholder="王小明/全家中山門市">
         <div class="hint">賣貨便格式：本名/取貨門市</div>
       </div>
-      
       <div class="form-group">
         <label>電話 <span class="required">*</span></label>
-        <input type="tel" id="phone" placeholder="0912-345678" pattern="09\d{2}-\d{6}">
-        <div class="hint">格式：09XX-XXXXXX（例如：0912-345678）</div>
+        <input type="tel" id="phone" placeholder="0912-345678">
+        <div class="hint">格式：09XX-XXXXXX</div>
       </div>
     </div>
     
     <div class="card">
       <div class="card-title">其他設定</div>
-      
       <div class="form-group">
         <label>留言備註</label>
         <input type="text" id="note" placeholder="選填，如追加填單請在此備註">
@@ -409,17 +177,15 @@
           <li>預計匯款時間 - 自動填入當下時間</li>
         </ul>
       </div>
-      <div class="hint">以上項目會在執行腳本時自動完成</div>
     </div>
     
-    <button class="generate-btn" onclick="generateBookmarklet()">✨ 生成我的專屬書籤</button>
+    <button class="generate-btn" onclick="generate()">✨ 生成我的專屬書籤</button>
     
-    <div class="result-section" id="resultSection">
+    <div class="result-section" id="result">
       <div class="card">
         <div class="card-title">你的專屬 Bookmarklet</div>
-        <div class="result-box" id="resultCode"></div>
+        <div class="result-box" id="code"></div>
         <button class="copy-btn" onclick="copyCode()">📋 複製程式碼</button>
-        
         <div class="instructions">
           <h3>📖 使用說明</h3>
           <ol>
@@ -434,61 +200,85 @@
       </div>
     </div>
     
-    <footer>
-      Made with ❤️ by <a href="https://www.plurk.com/joanna8799" target="_blank">@joanna8799</a>
-    </footer>
+    <footer>Made with ❤️ by <a href="https://www.plurk.com/joanna8799" target="_blank">@joanna8799</a></footer>
   </div>
   
   <script>
-    function generateBookmarklet() {
-      const plurk = document.getElementById('plurk').value.trim();
-      const nickname = document.getElementById('nickname').value.trim();
-      const bank = document.getElementById('bank').value;
-      const last5 = document.getElementById('last5').value.trim();
-      const amount = document.getElementById('amount').value.trim();
-      const shippingMethod = document.getElementById('shippingMethod').value;
-      const shipping = document.getElementById('shipping').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const note = document.getElementById('note').value.trim();
-      
-      // 驗證必填
-      if (!plurk || plurk === '@' || !nickname || !last5 || !amount || !shipping || !phone) {
-        alert('請填寫所有必填欄位！');
-        return;
-      }
-      
-      // 驗證電話格式 09XX-XXXXXX
-      const phoneRegex = /^09\d{2}-\d{6}$/;
-      if (!phoneRegex.test(phone)) {
-        alert('電話格式錯誤！請使用 09XX-XXXXXX 格式\n例如：0912-345678');
-        document.getElementById('phone').focus();
-        return;
-      }
-      
-      // 使用已驗證有效的腳本結構，加入匯款時間自動填入
-      const code = `javascript:(function(){function findQuestionItem(keyword){var items=document.querySelectorAll('div[role="listitem"]');for(var i=0;i<items.length;i++){var item=items[i];var title=item.querySelector('[role="heading"],.M7eMe');if(title&&title.innerText.indexOf(keyword)>-1)return item}return null}function setValue(el,value){if(!el)return;el.focus();el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.blur()}function fillText(questionKeyword,value){var item=findQuestionItem(questionKeyword);if(!item)return;var input=item.querySelector('input[type="text"],textarea');if(input)setValue(input,value)}function chooseRadioContains(questionKeyword,optionKeyword){var item=findQuestionItem(questionKeyword);if(!item)return;var radios=item.querySelectorAll('[role="radio"]');for(var i=0;i<radios.length;i++){var r=radios[i];var label=r.closest('label');var text=(r.getAttribute('aria-label')||'')+' '+(r.getAttribute('data-value')||'')+' '+(label?label.innerText:'');if(text.indexOf(optionKeyword)>-1){r.click();return}}}function checkAllCheckboxes(){document.querySelectorAll('[role="checkbox"]').forEach(function(el){if(el.getAttribute('aria-checked')==='false')el.click()})}function fillDateTime(){var now=new Date();var inputs=document.querySelectorAll('input');inputs.forEach(function(el){var a=el.getAttribute('aria-label')||'';if(a.indexOf('Month')>-1||a.indexOf('月')>-1){setValue(el,String(now.getMonth()+1).padStart(2,'0'))}if(a.indexOf('Day')>-1||a.indexOf('日')>-1){setValue(el,String(now.getDate()).padStart(2,'0'))}if(a.indexOf('Year')>-1||a.indexOf('年')>-1){setValue(el,now.getFullYear())}if(a.indexOf('Hour')>-1||a.indexOf('時')>-1){setValue(el,now.getHours()%12||12)}if(a.indexOf('Minute')>-1||a.indexOf('分')>-1){setValue(el,String(now.getMinutes()).padStart(2,'0'))}});var ampmSelects=document.querySelectorAll('[role="listbox"]');ampmSelects.forEach(function(el){if(el.innerText.indexOf('AM')>-1||el.innerText.indexOf('PM')>-1){el.click();setTimeout(function(){var opts=document.querySelectorAll('[role="option"]');var target=new Date().getHours()>=12?'PM':'AM';opts.forEach(function(opt){if(opt.innerText.indexOf(target)>-1)opt.click()})},100)}})}var textRules={'噗浪帳號':'${escapeStr(plurk)}','暱稱':'${escapeStr(nickname)}','帳號末':'${escapeStr(last5)}','匯款金額':'${escapeStr(amount)}','收件資料':'${escapeStr(shipping)}','電話':'${escapeStr(phone)}','留言':'${escapeStr(note)}','備註':'${escapeStr(note)}'};var radioRules=[['匯款帳戶','${escapeStr(bank)}'],['寄送方式','${escapeStr(shippingMethod)}'],['請再次確認','是']];for(var k in textRules){if(textRules[k])fillText(k,textRules[k])}for(var i=0;i<radioRules.length;i++){chooseRadioContains(radioRules[i][0],radioRules[i][1])}checkAllCheckboxes();fillDateTime();alert('✅ 自動填入完成！請檢查資料後送出')})();`;
-      
-      document.getElementById('resultCode').textContent = code;
-      document.getElementById('resultSection').classList.add('show');
-      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    function escapeStr(str) {
-      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    }
-    
-    function copyCode() {
-      const code = document.getElementById('resultCode').textContent;
-      navigator.clipboard.writeText(code).then(function() {
-        const btn = document.querySelector('.copy-btn');
-        btn.textContent = '✅ 已複製！';
-        btn.classList.add('copied');
-        setTimeout(function() {
-          btn.textContent = '📋 複製程式碼';
-          btn.classList.remove('copied');
-        }, 2000);
-      });
-    }
+function generate() {
+  var plurk = document.getElementById('plurk').value.trim();
+  var nickname = document.getElementById('nickname').value.trim();
+  var bank = document.getElementById('bank').value;
+  var last5 = document.getElementById('last5').value.trim();
+  var amount = document.getElementById('amount').value.trim();
+  var shippingMethod = document.getElementById('shippingMethod').value;
+  var shipping = document.getElementById('shipping').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var note = document.getElementById('note').value.trim();
+  
+  if (!plurk || plurk === '@' || !nickname || !last5 || !amount || !shipping || !phone) {
+    alert('請填寫所有必填欄位！');
+    return;
+  }
+  
+  var phoneRegex = /^09\d{2}-\d{6}$/;
+  if (!phoneRegex.test(phone)) {
+    alert('電話格式錯誤！請使用 09XX-XXXXXX 格式');
+    return;
+  }
+
+  // 使用 Function 來建立腳本，避免字串跳脫問題
+  var scriptBody = [
+    'var textRules={',
+    '"噗浪帳號":"' + esc(plurk) + '",',
+    '"暱稱":"' + esc(nickname) + '",',
+    '"帳號末":"' + esc(last5) + '",',
+    '"匯款金額":"' + esc(amount) + '",',
+    '"收件資料":"' + esc(shipping) + '",',
+    '"電話":"' + esc(phone) + '",',
+    '"留言":"' + esc(note) + '",',
+    '"備註":"' + esc(note) + '"',
+    '};',
+    'var radioRules=[',
+    '["匯款帳戶","' + esc(bank) + '"],',
+    '["寄送方式","' + esc(shippingMethod) + '"],',
+    '["請再次確認","是"]',
+    '];',
+    'function findQ(k){var items=document.querySelectorAll(\'div[role="listitem"]\');for(var i=0;i<items.length;i++){var item=items[i];var t=item.querySelector(\'[role="heading"],.M7eMe\');if(t&&t.innerText.indexOf(k)>-1)return item}return null}',
+    'function setV(el,v){if(!el)return;el.focus();el.value=v;el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}));el.blur()}',
+    'function fillT(k,v){var item=findQ(k);if(!item)return;var inp=item.querySelector(\'input[type="text"],textarea\');if(inp)setV(inp,v)}',
+    'function pickR(k,opt){var item=findQ(k);if(!item)return;var radios=item.querySelectorAll(\'[role="radio"]\');for(var i=0;i<radios.length;i++){var r=radios[i];var lbl=r.closest("label");var txt=(r.getAttribute("aria-label")||"")+(r.getAttribute("data-value")||"")+(lbl?lbl.innerText:"");if(txt.indexOf(opt)>-1){r.click();return}}}',
+    'function chkBox(){var boxes=document.querySelectorAll(\'[role="checkbox"]\');for(var i=0;i<boxes.length;i++){if(boxes[i].getAttribute("aria-checked")==="false")boxes[i].click()}}',
+    'function fillDT(){var now=new Date();var m=String(now.getMonth()+1).padStart(2,"0");var d=String(now.getDate()).padStart(2,"0");var y=String(now.getFullYear());var h=String(now.getHours()%12||12);var mi=String(now.getMinutes()).padStart(2,"0");var inputs=document.querySelectorAll("input");for(var i=0;i<inputs.length;i++){var a=inputs[i].getAttribute("aria-label")||"";if(a.indexOf("Month")>-1)setV(inputs[i],m);else if(a.indexOf("Day")>-1)setV(inputs[i],d);else if(a.indexOf("Year")>-1)setV(inputs[i],y);else if(a.indexOf("Hour")>-1)setV(inputs[i],h);else if(a.indexOf("Minute")>-1)setV(inputs[i],mi)}}',
+    'for(var k in textRules){if(textRules[k])fillT(k,textRules[k])}',
+    'for(var i=0;i<radioRules.length;i++){pickR(radioRules[i][0],radioRules[i][1])}',
+    'chkBox();',
+    'fillDT();',
+    'alert("done");'
+  ].join('');
+
+  var code = 'javascript:(function(){' + scriptBody + '})();';
+  
+  document.getElementById('code').textContent = code;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+}
+
+function esc(s) {
+  return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+function copyCode() {
+  var code = document.getElementById('code').textContent;
+  navigator.clipboard.writeText(code).then(function() {
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ 已複製！';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = '📋 複製程式碼';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
   </script>
 </body>
 </html>
